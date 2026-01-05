@@ -1,0 +1,33 @@
+name: Maven Deploy to Custom Server
+
+on:
+  push:
+    branches:
+      - main # Or your main branch name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK and Maven settings
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17' # Specify your JDK version
+          distribution: 'temurin'
+          cache: 'maven'
+          # The actions/setup-java action automatically configures settings.xml
+          # with server credentials from environment variables if the server-id is provided.
+          server-id: repsy # Must match the id in pom.xml
+          server-username: REPSY_USERNAME
+          server-password: REPSY_TOKEN
+
+      - name: Deploy to custom server
+        run: mvn --batch-mode deploy
+        env:
+          # Map GitHub secrets to the environment variables expected by the setup-java action
+          REPSY_USERNAME: ${{ secrets.REPSY_USERNAME }}
+          REPSY_TOKEN: ${{ secrets.REPSY_TOKEN }}
