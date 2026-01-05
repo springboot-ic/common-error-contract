@@ -1,6 +1,15 @@
 package com.ic.springboot.errors.contract;
 
 public interface ErrorCode {
+
     String code();
-    Integer httpStatus();
+
+    default Integer httpStatus() {
+        return 500;
+    }
+
+    default String message() {
+        return "An unexpected error occurred.";
+    }
+
 }
